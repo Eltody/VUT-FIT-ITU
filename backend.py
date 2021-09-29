@@ -51,11 +51,11 @@ def Main():
     print('cards_in_stack:', len(cards_in_stack))
 
     # volanie funkcii na tah hraca a bota
-    playerMove(thrownAwayCards, playerCards)
-    botMove(thrownAwayCards, botCards)
+    playerMove(cards_in_stack, thrownAwayCards, playerCards)
+    botMove(cards_in_stack, thrownAwayCards, botCards)
     exit(0) # uspesne ukoncenie programu
 
-def playerMove(thrownAwayCards, playerCards):
+def playerMove(cards_in_stack, thrownAwayCards, playerCards):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
     if playerCards != 0:
@@ -75,7 +75,7 @@ def playerMove(thrownAwayCards, playerCards):
             colorOfThrownAwayCard = 'wild card'
         print(colorOfThrownAwayCard)
 
-        # vrati vsetky hracove karty, ktore maju rovnaku farbu ako farba karty na hromadke
+        # vyberie vsetky hracove karty, ktore maju rovnaku farbu ako farba karty na hromadke
         sameColorPlayerCardsToThrowAway = [i for i in playerCards if colorOfThrownAwayCard in i]
 
         # zistenie cisla karty na odhadzovacej hromadke
@@ -104,7 +104,7 @@ def playerMove(thrownAwayCards, playerCards):
             numberOfThrownAwayCard = 'wild card'
         print(numberOfThrownAwayCard)
 
-        # vrati vsetky hracove karty, ktore maju rovnake cislo ako cislo karty na hromadke
+        # vyberie vsetky hracove karty, ktore maju rovnake cislo ako cislo karty na hromadke
         sameNumberPlayerCardsToThrowAway = [i for i in playerCards if numberOfThrownAwayCard in i]
 
         # spojenie farbenych a ciselnych kariet, ktore moze hrac odhodit na hromadku
@@ -124,7 +124,7 @@ def playerMove(thrownAwayCards, playerCards):
         #     cards_in_stack.remove(cardToRemoveFromStack)            # odstranenie vybranej karty z balicku
         #     # TODO pokial tato vybrana karta z balicku dovoluje hracovi odhodit tuto novu kartu, moze tak urobit, inak sa tah presunie na tah bota
 
-def botMove(thrownAwayCards, botCards):
+def botMove(cards_in_stack, thrownAwayCards, botCards):
     if botCards != 0:
         allowedBotCardsToThrowAway = []  # karty, ktore moze bot odhodit na odhadzovaciu hromadku
 
@@ -141,7 +141,7 @@ def botMove(thrownAwayCards, botCards):
             print('[color] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             colorOfThrownAwayCard = 'wild card'
 
-        # vrati vsetky botove karty, ktore maju rovnaku farbu ako farba karty na hromadke
+        # vyberie vsetky botove karty, ktore maju rovnaku farbu ako farba karty na hromadke
         sameColorBotCardsToThrowAway = [i for i in botCards if colorOfThrownAwayCard in i]
 
         # zistenie cisla karty na odhadzovacej hromadke
@@ -169,12 +169,27 @@ def botMove(thrownAwayCards, botCards):
             print('[number] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             numberOfThrownAwayCard = 'wild card'
 
-        # vrati vsetky hracove karty, ktore maju rovnake cislo ako cislo karty na hromadke
+        # vyberie vsetky hracove karty, ktore maju rovnake cislo ako cislo karty na hromadke
         sameNumberBotCardsToThrowAway = [i for i in botCards if numberOfThrownAwayCard in i]
 
         # spojenie farbenych a ciselnych kariet, ktore moze hrac odhodit na hromadku
         allowedBotCardsToThrowAway = sameColorBotCardsToThrowAway + sameNumberBotCardsToThrowAway
         print('allowedBotCardsToThrowAway:', allowedBotCardsToThrowAway)
+        print('-----')
+
+        # bot zvoli kartu, ktoru zahrat moze a nasledne priradenie vybranej karty na vrch hromadky
+        if allowedBotCardsToThrowAway:
+            thrownAwayCards = allowedBotCardsToThrowAway[-1]
+            print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
+        else:
+            print('bot have to draw a card')
+            cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
+            botCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
+            print(len(cards_in_stack))
+            print(len(botCards))
+            # TODO pokial tato vybrana karta z balicku dovoluje botovi odhodit tuto novu kartu, urobi tak, inak sa tah presunie na tah hraca
+            
+            cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
 
 # Zavolanie fce Main
 Main()
