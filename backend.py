@@ -51,8 +51,8 @@ def Main():
     print('cards_in_stack:', len(cards_in_stack))
 
     # volanie funkcii na tah hraca a bota
-    cards_in_stack, thrownAwayCards = playerMove(cards_in_stack, thrownAwayCards, playerCards)
-    cards_in_stack, thrownAwayCards = botMove(cards_in_stack, thrownAwayCards, botCards)
+    cards_in_stack, thrownAwayCards, playerCards = playerMove(cards_in_stack, thrownAwayCards, playerCards)
+    cards_in_stack, thrownAwayCards, botCards = botMove(cards_in_stack, thrownAwayCards, botCards)
     exit(0) # uspesne ukoncenie programu
 
 def playerMove(cards_in_stack, thrownAwayCards, playerCards):
@@ -124,7 +124,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards):
         #     cards_in_stack.remove(cardToRemoveFromStack)            # odstranenie vybranej karty z balicku
         #     # TODO pokial tato vybrana karta z balicku dovoluje hracovi odhodit tuto novu kartu, moze tak urobit, inak sa tah presunie na tah bota
 
-        return (cards_in_stack, thrownAwayCards)
+        return (cards_in_stack, thrownAwayCards, playerCards)
 
 def botMove(cards_in_stack, thrownAwayCards, botCards):
     if botCards != 0:
@@ -206,6 +206,6 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
 
             cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
         print('-----')
-        return (cards_in_stack, thrownAwayCards)
+        return (cards_in_stack, thrownAwayCards, botCards)
 # Zavolanie fce Main
 Main()
