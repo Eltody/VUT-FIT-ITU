@@ -1,6 +1,3 @@
-# VUT_FIT_ITU_proj1
-Projekt k predmetu ITU - Tvorba užívateľských rozhraní
-
 <div align="center">
     <h1>VUT FIT ITU</h1>
 </div>
