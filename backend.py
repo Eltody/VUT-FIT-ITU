@@ -104,17 +104,25 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         if allowedPlayerCardsToThrowAway:
             if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
                 thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
+                playerCards.remove(sameColorPlayerCardsToThrowAway[-1])    # odstranenie poslednej karty - tej, kt. mozem odhodit
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                for item in sameColorPlayerCardsToThrowAway:
-                    if item in playerCards:
-                        playerCards.remove(item)
+                if len(sameColorPlayerCardsToThrowAway) >= 2:           # pokial mozem kariet odhodit naraz viac, tak odhodin dve posledne z tych, kt. mozem odhodit
+                    sameColorPlayerCardsToThrowAway.pop()
+                    playerCards.remove(sameColorPlayerCardsToThrowAway[-1])
+                # for item in sameColorPlayerCardsToThrowAway:
+                #     if item in playerCards:
+                #         playerCards.remove(item)
             # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
             elif len(sameColorPlayerCardsToThrowAway) < len(sameNumberPlayerCardsToThrowAway):
                 thrownAwayCards = sameNumberPlayerCardsToThrowAway[-1]
+                playerCards.remove(sameNumberPlayerCardsToThrowAway[-1])   # odstranenie poslednej karty - tej, kt. mozem odhodit
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                for item in sameNumberPlayerCardsToThrowAway:
-                    if item in playerCards:
-                        playerCards.remove(item)
+                if len(sameNumberPlayerCardsToThrowAway) >= 2:          # pokial mozem kariet odhodit naraz viac, tak odhodin dve posledne z tych, kt. mozem odhodit
+                    sameNumberPlayerCardsToThrowAway.pop()
+                    playerCards.remove(sameNumberPlayerCardsToThrowAway[-1])
+                # for item in sameNumberPlayerCardsToThrowAway:
+                #     if item in playerCards:
+                #         playerCards.remove(item)
             print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
             print('playerCards:', playerCards)
             if len(playerCards) == 0:
@@ -223,18 +231,26 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
         # pokial ma bot viac (prípadne rovnako) kariet s rovnakou farbou, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
         if allowedBotCardsToThrowAway:
             if len(sameColorBotCardsToThrowAway) >= len(sameNumberBotCardsToThrowAway):
-                thrownAwayCards = sameColorBotCardsToThrowAway[-1]
+                thrownAwayCards = sameColorBotCardsToThrowAway[-1]      # odstranenie poslednej karty - tej, kt. mozem odhodit
+                botCards.remove(sameColorBotCardsToThrowAway[-1])
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                for item in sameColorBotCardsToThrowAway:
-                    if item in botCards:
-                        botCards.remove(item)
+                if len(sameColorBotCardsToThrowAway) >= 2:              # pokial mozem kariet odhodit naraz viac, tak odhodin dve posledne z tych, kt. mozem odhodit
+                    sameColorBotCardsToThrowAway.pop()
+                    botCards.remove(sameColorBotCardsToThrowAway[-1])
+                # for item in sameColorBotCardsToThrowAway:
+                #     if item in botCards:
+                #         botCards.remove(item)
             # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
             elif len(sameColorBotCardsToThrowAway) < len(sameNumberBotCardsToThrowAway):
-                thrownAwayCards = sameNumberBotCardsToThrowAway[-1]
+                thrownAwayCards = sameNumberBotCardsToThrowAway[-1]     # odstranenie poslednej karty - tej, kt. mozem odhodit
+                botCards.remove(sameNumberBotCardsToThrowAway[-1])
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                for item in sameNumberBotCardsToThrowAway:
-                    if item in botCards:
-                        botCards.remove(item)
+                if len(sameNumberBotCardsToThrowAway) >= 2:             # pokial mozem kariet odhodit naraz viac, tak odhodin dve posledne z tych, kt. mozem odhodit
+                    sameNumberBotCardsToThrowAway.pop()
+                    botCards.remove(sameNumberBotCardsToThrowAway[-1])
+                # for item in sameNumberBotCardsToThrowAway:
+                #     if item in botCards:
+                #         botCards.remove(item)
             print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
             print('botCards:', botCards)
             if len(botCards) == 0:
@@ -249,6 +265,7 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
             cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
             botCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
             print(len(cards_in_stack))
+            print(botCards)
             print(len(botCards))
             # TODO pokial tato vybrana karta z balicku dovoluje botovi odhodit tuto novu kartu, urobi tak, inak sa tah presunie na tah hraca
 
