@@ -12,7 +12,7 @@ def Main():
     # Game mode: one player, one pc bot
     numberOfPlayers = 2
     # Game mode: one player, two pc bots
-    # numberOfPlayers = 3
+    ## numberOfPlayers = 3
 
     # rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
     if numberOfPlayers == 2 or numberOfPlayers == 3:
@@ -46,12 +46,11 @@ def Main():
     print('cards_in_stack:', len(cards_in_stack))
 
     # volanie funkcii na tah hraca a bota
-    for i in range (1000):
-        cards_in_stack, thrownAwayCards, playerCards = playerMove(cards_in_stack, thrownAwayCards, playerCards)
+    while(1):
+        cards_in_stack, thrownAwayCards, playerCards, botCards = playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards)
         cards_in_stack, thrownAwayCards, botCards = botMove(cards_in_stack, thrownAwayCards, botCards)
-    exit(0) # uspesne ukoncenie programu
 
-def playerMove(cards_in_stack, thrownAwayCards, playerCards):
+def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
     if len(playerCards) != 0:
@@ -141,6 +140,32 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards):
             print('playerCards:', playerCards)
             if len(playerCards) == 0:
                 print('Player has won the game.')
+                print(botCards)
+                # zistenie hodnoty jednotlivych botovych kariet, kt. ma na ruke po hracovom vitazstve
+                coinsToEarn = 0
+                for item in botCards:
+                    if 'Zero' in item:
+                        coinsToEarn += 0
+                    elif 'One' in item:
+                        coinsToEarn += 1
+                    elif 'Two' in item:
+                        coinsToEarn += 2
+                    elif 'Three' in item:
+                        coinsToEarn += 3
+                    elif 'Four' in item:
+                        coinsToEarn += 4
+                    elif 'Five' in item:
+                        coinsToEarn += 5
+                    elif 'Six' in item:
+                        coinsToEarn += 6
+                    elif 'Seven' in item:
+                        coinsToEarn += 7
+                    elif 'Eight' in item:
+                        coinsToEarn += 8
+                    elif 'Nine' in item:
+                        coinsToEarn += 9
+                ## return coinsToEarn  # vratim do FE informaciu o pocte hracovych zarobenych coinov z danej hry
+                print('coinsToEarn:', coinsToEarn)
                 exit(0)
         # Nutnost potiahnutia karty z balicku
         else:
@@ -158,7 +183,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards):
         print('-----')
         ################ AZ POTIALTO VYMAZAT BLOK KODU, KT. SLUZI NA OTESTOVANIE
 
-        return (cards_in_stack, thrownAwayCards, playerCards)
+        return (cards_in_stack, thrownAwayCards, playerCards, botCards)
     else:
         print('Player has won the game.')
         exit(0)
