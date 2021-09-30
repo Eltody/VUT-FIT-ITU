@@ -10,7 +10,7 @@ global languageButton
 global lang
 lang = "slovakia"
 
-def shop():
+def help():
     sys.exit(0)
 
 def language():
@@ -227,24 +227,24 @@ def decline():
     menu_layout.addWidget(quitButton, 13, 3, alignment=Qt.AlignCenter)
     quitButton.clicked.connect(quitConfirm)
 
-    shopButton = QPushButton(mainWindow)
+    helpButton = QPushButton(mainWindow)
     if lang == "slovakia":
-        shopButton.setText("Obchod")
+        helpButton.setText("Nápoveda")
     elif lang == "united-kingdom":
-        shopButton.setText("Shop")
+        helpButton.setText("Help")
     elif lang == "france":
-        shopButton.setText("Boutique")
+        helpButton.setText("Aider")
     elif lang == "germany":
-        shopButton.setText("Einkaufen")
+        helpButton.setText("Hilfe")
     elif lang == "russia":
-        shopButton.setText("Магазин")
+        helpButton.setText("Помощь")
     else:
-        shopButton.setText("Tienda")
-    shopButton.setStyleSheet("border-image: none")
-    shopButton.setCursor(Qt.PointingHandCursor)
-    shopButton.setFixedSize(screen.width() // 7, screen.height() // 13)
-    menu_layout.addWidget(shopButton, 13, 1)
-    shopButton.clicked.connect(shop)
+        helpButton.setText("Ayudar")
+    helpButton.setStyleSheet("border-image: none")
+    helpButton.setCursor(Qt.PointingHandCursor)
+    helpButton.setFixedSize(screen.width() // 7, screen.height() // 13)
+    menu_layout.addWidget(helpButton, 13, 1)
+    helpButton.clicked.connect(help)
 
     languageButton = QPushButton(mainWindow)
     languageButton.setStyleSheet("border-image: url(./images/%s.png)" % lang)
@@ -348,13 +348,13 @@ def main():
     menu_layout.addWidget(quitButton, 13, 3, alignment=Qt.AlignCenter)
     quitButton.clicked.connect(quitConfirm)
 
-    shopButton = QPushButton(mainWindow)
-    shopButton.setText("Obchod")
-    shopButton.setStyleSheet("border-image: none")
-    shopButton.setCursor(Qt.PointingHandCursor)
-    shopButton.setFixedSize(screen.width() // 7, screen.height() // 13)
-    menu_layout.addWidget(shopButton, 13, 1)
-    shopButton.clicked.connect(shop)
+    helpButton = QPushButton(mainWindow)
+    helpButton.setText("Nápoveda")
+    helpButton.setStyleSheet("border-image: none")
+    helpButton.setCursor(Qt.PointingHandCursor)
+    helpButton.setFixedSize(screen.width() // 7, screen.height() // 13)
+    menu_layout.addWidget(helpButton, 13, 1)
+    helpButton.clicked.connect(help)
 
     languageButton = QPushButton(mainWindow)
     languageButton.setStyleSheet("border-image: url(./images/%s.png)" % lang)
