@@ -4,13 +4,8 @@ import random
 # Pravidla hry Uno: https://www.navod-k-obsluze.cz/upload/karetni-hra-uno-navod-k-obsluze.pdf
 
 def Main():
-    cards_in_stack = ['redZero', 'redOne', 'redTwo', 'redThree', 'redFour', 'redFive', 'redSix', 'redSeven', 'redEight', 'redNine', 'second_redOne', 'second_redTwo', 'second_redThree', 'second_redFour', 'second_redFive', 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine', 'redSkipCard', 'second_redSkipCard', 'redReverseCard', 'second_redReverseCard', 'redDraw2Card', 'second_redDraw2Card',
-                        'yellowZero', 'yellowOne', 'yellowTwo', 'yellowThree', 'yellowFour', 'yellowFive', 'yellowSix', 'yellowSeven', 'yellowEight', 'yellowNine', 'second_yellowOne', 'second_yellowTwo', 'second_yellowThree', 'second_yellowFour', 'second_yellowFive', 'second_yellowSix', 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine', 'yellowSkipCard', 'second_yellowSkipCard', 'yellowReverseCard', 'second_redReverseCard', 'redDraw2Card', 'second_redDraw2Card',
-                        'greenZero', 'greenOne', 'greenTwo', 'greenThree', 'greenFour', 'greenFive', 'greenSix', 'greenSeven', 'greenEight', 'greenNine', 'second_greenOne', 'second_greenTwo', 'second_greenThree', 'second_greenFour', 'second_greenFive', 'second_greenSix', 'second_greenSeven', 'second_greenEight', 'second_greenNine', 'greenSkipCard', 'second_greenSkipCard', 'greenReverseCard', 'second_greenReverseCard', 'greenDraw2Card', 'second_greenDraw2Card',
-                        'blueZero', 'blueOne', 'blueTwo', 'blueThree', 'blueFour', 'blueFive', 'blueSix', 'blueSeven', 'blueEight', 'blueNine', 'second_blueOne', 'second_blueTwo', 'second_blueThree', 'second_blueFour', 'second_blueFive', 'second_blueSix', 'second_blueSeven', 'second_blueEight', 'second_blueNine', 'blueSkipCard', 'second_blueSkipCard', 'blueReverseCard', 'second_blueReverseCard', 'blueDraw2Card', 'second_blueDraw2Card',
-                        'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card', 'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card']
     # zamiesanie kariet na zaciatku hry
-    random.shuffle(cards_in_stack)
+    cards_in_stack = shuffle_new_cards()
     playerCards = []
     botCards = []
     second_botCards = []
@@ -51,14 +46,15 @@ def Main():
     print('cards_in_stack:', len(cards_in_stack))
 
     # volanie funkcii na tah hraca a bota
-    cards_in_stack, thrownAwayCards, playerCards = playerMove(cards_in_stack, thrownAwayCards, playerCards)
-    cards_in_stack, thrownAwayCards, botCards = botMove(cards_in_stack, thrownAwayCards, botCards)
+    for i in range (1000):
+        cards_in_stack, thrownAwayCards, playerCards = playerMove(cards_in_stack, thrownAwayCards, playerCards)
+        cards_in_stack, thrownAwayCards, botCards = botMove(cards_in_stack, thrownAwayCards, botCards)
     exit(0) # uspesne ukoncenie programu
 
 def playerMove(cards_in_stack, thrownAwayCards, playerCards):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
-    if playerCards != 0:
+    if len(playerCards) != 0:
         allowedPlayerCardsToThrowAway = []      # karty, ktore moze hrac odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -108,6 +104,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards):
         sameNumberPlayerCardsToThrowAway = [i for i in playerCards if numberOfThrownAwayCard in i]
 
         # spojenie farbenych a ciselnych kariet, ktore moze hrac odhodit na hromadku
+        # TODO vyriesit duplikaty, ked sa spoja farba a cislo
         allowedPlayerCardsToThrowAway = sameColorPlayerCardsToThrowAway + sameNumberPlayerCardsToThrowAway
         print('allowedPlayerCardsToThrowAway:', allowedPlayerCardsToThrowAway)
 
@@ -124,10 +121,50 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards):
         #     cards_in_stack.remove(cardToRemoveFromStack)            # odstranenie vybranej karty z balicku
         #     # TODO pokial tato vybrana karta z balicku dovoluje hracovi odhodit tuto novu kartu, moze tak urobit, inak sa tah presunie na tah bota
 
+
+        ################ VYMAZAT TENTO BLOK, SLUZI LEN NA OTESTOVANIE FUNGOVANIA HRY DVOCH BOTOV
+        if allowedPlayerCardsToThrowAway:
+            if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
+                thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
+                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
+                for item in sameColorPlayerCardsToThrowAway:
+                    if item in playerCards:
+                        playerCards.remove(item)
+            # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
+            elif len(sameColorPlayerCardsToThrowAway) < len(sameNumberPlayerCardsToThrowAway):
+                thrownAwayCards = sameNumberPlayerCardsToThrowAway[-1]
+                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
+                for item in sameNumberPlayerCardsToThrowAway:
+                    if item in playerCards:
+                        playerCards.remove(item)
+            print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
+            print('playerCards:', playerCards)
+            if len(playerCards) == 0:
+                print('Player has won the game.')
+                exit(0)
+        # Nutnost potiahnutia karty z balicku
+        else:
+            print('player have to draw a card')
+            # nove vygenerovanie balicku kariet, pokial uz je balicek prazdny
+            if len(cards_in_stack) == 0:
+                cards_in_stack = shuffle_new_cards()
+            cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
+            playerCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
+            print(len(cards_in_stack))
+            print(len(playerCards))
+            # TODO pokial tato vybrana karta z balicku dovoluje botovi odhodit tuto novu kartu, urobi tak, inak sa tah presunie na tah hraca
+
+            cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
+        print('-----')
+        ################ AZ POTIALTO VYMAZAT BLOK KODU, KT. SLUZI NA OTESTOVANIE
+
         return (cards_in_stack, thrownAwayCards, playerCards)
+    else:
+        print('Player has won the game.')
+        exit(0)
 
 def botMove(cards_in_stack, thrownAwayCards, botCards):
-    if botCards != 0:
+    if len(botCards) != 0:
         allowedBotCardsToThrowAway = []  # karty, ktore moze bot odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -196,8 +233,15 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
                         botCards.remove(item)
             print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
             print('botCards:', botCards)
+            if len(botCards) == 0:
+                print('Bot has won the game.')
+                exit(0)
+        # Nutnost potiahnutia karty z balicku
         else:
             print('bot have to draw a card')
+            # nove vygenerovanie balicku kariet, pokial uz je balicek prazdny
+            if len(cards_in_stack) == 0:
+                cards_in_stack = shuffle_new_cards()
             cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
             botCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
             print(len(cards_in_stack))
@@ -207,5 +251,31 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
             cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
         print('-----')
         return (cards_in_stack, thrownAwayCards, botCards)
+    else:
+        print('Bot has won the game.')
+        exit(0)
+
+def shuffle_new_cards():
+    new_cards = ['redZero', 'redOne', 'redTwo', 'redThree', 'redFour', 'redFive', 'redSix', 'redSeven', 'redEight',
+                 'redNine', 'second_redOne', 'second_redTwo', 'second_redThree', 'second_redFour', 'second_redFive',
+                 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine',
+                 'yellowZero', 'yellowOne', 'yellowTwo', 'yellowThree', 'yellowFour', 'yellowFive', 'yellowSix',
+                 'yellowSeven', 'yellowEight', 'yellowNine', 'second_yellowOne', 'second_yellowTwo',
+                 'second_yellowThree', 'second_yellowFour', 'second_yellowFive', 'second_yellowSix',
+                 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine',
+                 'greenZero', 'greenOne', 'greenTwo', 'greenThree', 'greenFour', 'greenFive', 'greenSix', 'greenSeven',
+                 'greenEight', 'greenNine', 'second_greenOne', 'second_greenTwo', 'second_greenThree',
+                 'second_greenFour', 'second_greenFive', 'second_greenSix', 'second_greenSeven', 'second_greenEight',
+                 'second_greenNine',
+                 'blueZero', 'blueOne', 'blueTwo', 'blueThree', 'blueFour', 'blueFive', 'blueSix', 'blueSeven',
+                 'blueEight', 'blueNine', 'second_blueOne', 'second_blueTwo', 'second_blueThree', 'second_blueFour',
+                 'second_blueFive', 'second_blueSix', 'second_blueSeven', 'second_blueEight', 'second_blueNine']
+
+                # TODO PODPOROVAT WILD CARDS
+                 #,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
+                 #'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card']
+    random.shuffle(new_cards)
+    return new_cards
+
 # Zavolanie fce Main
 Main()
