@@ -15,28 +15,7 @@ def Main():
     ## numberOfPlayers = 3
 
     # rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
-    if numberOfPlayers == 2 or numberOfPlayers == 3:
-        print('cards_in_stack:', len(cards_in_stack))
-        for i in range(7):
-            cardToRemoveFromStack = random.choice(cards_in_stack)
-            playerCards.append(cardToRemoveFromStack)
-            cards_in_stack.remove(cardToRemoveFromStack)
-        print('playerCards:', playerCards)
-        print('cards_in_stack:', len(cards_in_stack))
-
-        for i in range(7):
-            cardToRemoveFromStack = random.choice(cards_in_stack)
-            botCards.append(cardToRemoveFromStack)
-            cards_in_stack.remove(cardToRemoveFromStack)
-        print('botCards:', botCards)
-        print('cards_in_stack:', len(cards_in_stack))
-        if numberOfPlayers == 3:
-            for i in range(7):
-                cardToRemoveFromStack = random.choice(cards_in_stack)
-                second_botCards.append(cardToRemoveFromStack)
-                cards_in_stack.remove(cardToRemoveFromStack)
-            print('second_botCards:', second_botCards)
-            print('cards_in_stack:', len(cards_in_stack))
+    numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards = deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards)
 
     # Otocenie vrchnej karty z balicku licem nahoru a polozenie na stol ako zaklad odhadzovacej hromadky, na kt. budu hraci odhadzovat svoje karty
     thrownAwayCards = cards_in_stack[-1]
@@ -280,6 +259,7 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
         print('Bot has won the game.')
         exit(0)
 
+# inicializacia a zamiesanie kariet
 def shuffle_new_cards():
     new_cards = ['redZero', 'redOne', 'redTwo', 'redThree', 'redFour', 'redFive', 'redSix', 'redSeven', 'redEight',
                  'redNine', 'second_redOne', 'second_redTwo', 'second_redThree', 'second_redFour', 'second_redFive',
@@ -299,8 +279,37 @@ def shuffle_new_cards():
                 # TODO PODPOROVAT WILD CARDS
                  #,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
                  #'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card']
+    # zamiesanie balicku kariet
     random.shuffle(new_cards)
     return new_cards
+
+# rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
+def deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards):
+    if numberOfPlayers == 2 or numberOfPlayers == 3:
+        print('cards_in_stack:', len(cards_in_stack))
+        # rozdanie 7 kariet hracovi
+        for i in range(7):
+            cardToRemoveFromStack = random.choice(cards_in_stack)
+            playerCards.append(cardToRemoveFromStack)
+            cards_in_stack.remove(cardToRemoveFromStack)
+        print('playerCards:', playerCards)
+        print('cards_in_stack:', len(cards_in_stack))
+        # rozdanie 7 kariet botovi
+        for i in range(7):
+            cardToRemoveFromStack = random.choice(cards_in_stack)
+            botCards.append(cardToRemoveFromStack)
+            cards_in_stack.remove(cardToRemoveFromStack)
+        print('botCards:', botCards)
+        print('cards_in_stack:', len(cards_in_stack))
+        # rozdanie 7 kariet druhemu botovi
+        if numberOfPlayers == 3:
+            for i in range(7):
+                cardToRemoveFromStack = random.choice(cards_in_stack)
+                second_botCards.append(cardToRemoveFromStack)
+                cards_in_stack.remove(cardToRemoveFromStack)
+            print('second_botCards:', second_botCards)
+            print('cards_in_stack:', len(cards_in_stack))
+    return (numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards)
 
 # Zavolanie fce Main
 Main()
