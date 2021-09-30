@@ -1,18 +1,21 @@
-import random
+__author__ = "Zatko Tomas"
+__login__  = "xzatko02"
 
+import random
 
 # Pravidla hry Uno: https://www.navod-k-obsluze.cz/upload/karetni-hra-uno-navod-k-obsluze.pdf
 
 def Main():
     # zamiesanie kariet na zaciatku hry
     cards_in_stack = shuffle_new_cards()
+    # inicializacia premennych - zoznamov
     playerCards = []
     botCards = []
     second_botCards = []
     # Game mode: one player, one pc bot
-    numberOfPlayers = 2
+    numberOfPlayers = 2     # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
     # Game mode: one player, two pc bots
-    ## numberOfPlayers = 3
+    ## numberOfPlayers = 3  # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
 
     # rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
     numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards = deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards)
@@ -295,7 +298,7 @@ def shuffle_new_cards():
 
                 # TODO PODPOROVAT WILD CARDS
                  #,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
-                 #'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card']
+                 #'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card', redSkipCard,... ] A MNOHO DALSIIIIIIIIIIIIICH
     # zamiesanie balicku kariet
     random.shuffle(new_cards)
     return new_cards
