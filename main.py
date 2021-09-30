@@ -21,6 +21,9 @@ def gameConfig():
     global languageButton
     global lang
 
+    if not inputLine.text():
+        return
+
     background = QWidget(mainWindow)
     background.setFixedSize(screen.width(), screen.height())
     background.setStyleSheet(".QWidget{border-image: url(./images/background.jpg)}")
@@ -62,7 +65,7 @@ def gameConfig():
 
     profile1 = QPushButton(mainWindow)
     if lang == "slovakia":
-        profile1.setText("Vytvoriť nový profil")
+        profile1.setText("Počet hráčov")
     elif lang == "united-kingdom":
         profile1.setText("Create new profile")
     elif lang == "france":
@@ -79,7 +82,7 @@ def gameConfig():
 
     profile2 = QPushButton(mainWindow)
     if lang == "slovakia":
-        profile2.setText("Vytvoriť nový profil")
+        profile2.setText("Výber témy")
     elif lang == "united-kingdom":
         profile2.setText("Create new profile")
     elif lang == "france":
@@ -96,7 +99,7 @@ def gameConfig():
 
     profile3 = QPushButton(mainWindow)
     if lang == "slovakia":
-        profile3.setText("Vytvoriť nový profil")
+        profile3.setText("Výber obrázku profilu")
     elif lang == "united-kingdom":
         profile3.setText("Create new profile")
     elif lang == "france":
@@ -111,39 +114,39 @@ def gameConfig():
     profile3.clicked.connect(new)
     menu_layout.addWidget(profile3, 7, 3)
 
-    profile4 = QPushButton(mainWindow)
+    shopButton = QPushButton(mainWindow)
     if lang == "slovakia":
-        profile4.setText("Vytvoriť nový profil")
+        shopButton.setText("Obchod")
     elif lang == "united-kingdom":
-        profile4.setText("Create new profile")
+        shopButton.setText("Create new profile")
     elif lang == "france":
-        profile4.setText("Créer un nouveau profil")
+        shopButton.setText("Créer un nouveau profil")
     elif lang == "germany":
-        profile4.setText("Neues profil erstellen")
+        shopButton.setText("Neues profil erstellen")
     else:
-        profile4.setText("Создать новый профиль")
-    profile4.setStyleSheet("border-image: none")
-    profile4.setCursor(Qt.PointingHandCursor)
-    profile4.setFixedSize(screen.width() // 3, screen.height() // 13)
-    profile4.clicked.connect(new)
-    menu_layout.addWidget(profile4, 9, 3)
+        shopButton.setText("Создать новый профиль")
+    shopButton.setStyleSheet("border-image: none")
+    shopButton.setCursor(Qt.PointingHandCursor)
+    shopButton.setFixedSize(screen.width() // 3, screen.height() // 13)
+    shopButton.clicked.connect(new)
+    menu_layout.addWidget(shopButton, 11, 3)
 
-    profile5 = QPushButton(mainWindow)
+    menuButton = QPushButton(mainWindow)
     if lang == "slovakia":
-        profile5.setText("Vytvoriť nový profil")
+        menuButton.setText("Hlavné menu")
     elif lang == "united-kingdom":
-        profile5.setText("Create new profile")
+        menuButton.setText("Main menu")
     elif lang == "france":
-        profile5.setText("Créer un nouveau profil")
+        menuButton.setText("Menu principal")
     elif lang == "germany":
-        profile5.setText("Neues profil erstellen")
+        menuButton.setText("Hauptmenü")
     else:
-        profile5.setText("Создать новый профиль")
-    profile5.setStyleSheet("border-image: none")
-    profile5.setCursor(Qt.PointingHandCursor)
-    profile5.setFixedSize(screen.width() // 3, screen.height() // 13)
-    profile5.clicked.connect(new)
-    menu_layout.addWidget(profile5, 11, 3)
+        menuButton.setText("Главное меню")
+    menuButton.setStyleSheet("border-image: none")
+    menuButton.setCursor(Qt.PointingHandCursor)
+    menuButton.setFixedSize(screen.width() // 7, screen.height() // 13)
+    menu_layout.addWidget(menuButton, 13, 1)
+    menuButton.clicked.connect(menu)
 
     quitButton = QPushButton(mainWindow)
     if lang == "slovakia":
@@ -159,32 +162,8 @@ def gameConfig():
     quitButton.setStyleSheet("border-image: none")
     quitButton.setCursor(Qt.PointingHandCursor)
     quitButton.setFixedSize(screen.width() // 7, screen.height() // 13)
-    menu_layout.addWidget(quitButton, 13, 3, alignment=Qt.AlignCenter)
+    menu_layout.addWidget(quitButton, 13, 5)
     quitButton.clicked.connect(quitConfirm)
-
-    helpButton = QPushButton(mainWindow)
-    if lang == "slovakia":
-        helpButton.setText("Nápoveda")
-    elif lang == "united-kingdom":
-        helpButton.setText("Help")
-    elif lang == "france":
-        helpButton.setText("Aider")
-    elif lang == "germany":
-        helpButton.setText("Hilfe")
-    else:
-        helpButton.setText("Помощь")
-    helpButton.setStyleSheet("border-image: none")
-    helpButton.setCursor(Qt.PointingHandCursor)
-    helpButton.setFixedSize(screen.width() // 7, screen.height() // 13)
-    menu_layout.addWidget(helpButton, 13, 1)
-    helpButton.clicked.connect(help)
-
-    languageButton = QPushButton(mainWindow)
-    languageButton.setStyleSheet("border-image: url(./images/%s.png)" % lang)
-    languageButton.setCursor(Qt.PointingHandCursor)
-    languageButton.setFixedSize(screen.height() // 13, screen.height() // 13)
-    menu_layout.addWidget(languageButton, 13, 5, alignment=Qt.AlignCenter)
-    languageButton.clicked.connect(language)
 
     mainWindow.setCentralWidget(background)
     mainWindow.update()
@@ -335,7 +314,6 @@ def language():
     else:
         lang = "slovakia"
 
-    languageButton.setStyleSheet("border-image: url(./images/%s.png)" % lang)
     menu()
 
 def quitConfirm():
