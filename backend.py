@@ -1,7 +1,8 @@
 __author__ = "Zatko Tomas"
-__login__  = "xzatko02"
+__login__ = "xzatko02"
 
 import random
+
 
 # Pravidla hry Uno: https://www.navod-k-obsluze.cz/upload/karetni-hra-uno-navod-k-obsluze.pdf
 
@@ -12,13 +13,17 @@ def Main():
     playerCards = []
     botCards = []
     second_botCards = []
+    skipCard = False
     # Game mode: one player, one pc bot
-    numberOfPlayers = 2     # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
+    numberOfPlayers = 2  # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
     # Game mode: one player, two pc bots
     ## numberOfPlayers = 3  # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
 
     # rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
-    numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards = deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards)
+    numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards = deal_the_cards(numberOfPlayers,
+                                                                                             cards_in_stack,
+                                                                                             playerCards, botCards,
+                                                                                             second_botCards)
 
     # Otocenie vrchnej karty z balicku licem nahoru a polozenie na stol ako zaklad odhadzovacej hromadky, na kt. budu hraci odhadzovat svoje karty
     thrownAwayCards = cards_in_stack[-1]
@@ -28,15 +33,20 @@ def Main():
     print('cards_in_stack:', len(cards_in_stack))
 
     # volanie funkcii na tah hraca a bota
-    while(1):
-        cards_in_stack, thrownAwayCards, playerCards, botCards = playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards)
-        cards_in_stack, thrownAwayCards, botCards = botMove(cards_in_stack, thrownAwayCards, botCards)
+    while (1):
+        cards_in_stack, thrownAwayCards, playerCards, botCards = playerMove(cards_in_stack, thrownAwayCards,
+                                                                            playerCards, botCards)
+        cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards, skipCard)
+        if skipCard:
+            cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards,
+                                                                          skipCard)
+
 
 def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
     if len(playerCards) != 0:
-        allowedPlayerCardsToThrowAway = []      # karty, ktore moze hrac odhodit na odhadzovaciu hromadku
+        allowedPlayerCardsToThrowAway = []  # karty, ktore moze hrac odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
         if 'red' in thrownAwayCards:
@@ -48,7 +58,8 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         elif 'blue' in thrownAwayCards:
             colorOfThrownAwayCard = 'blue'
         else:
-            print('[color] ThrownAwayCard is a wild card, code is not ready for this yet.') # TODO implement wild cards, reverse cards, draw cards, skip cards
+            print(
+                '[color] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             colorOfThrownAwayCard = 'wild card'
         print(colorOfThrownAwayCard)
 
@@ -77,7 +88,8 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         elif 'Nine' in thrownAwayCards:
             numberOfThrownAwayCard = 'Nine'
         else:
-            print('[number] ThrownAwayCard is a wild card, code is not ready for this yet.') # TODO implement wild cards, reverse cards, draw cards, skip cards
+            print(
+                '[number] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             numberOfThrownAwayCard = 'wild card'
         print(numberOfThrownAwayCard)
 
@@ -102,12 +114,12 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         #     cards_in_stack.remove(cardToRemoveFromStack)            # odstranenie vybranej karty z balicku
         #     # TODO pokial tato vybrana karta z balicku dovoluje hracovi odhodit tuto novu kartu, moze tak urobit, inak sa tah presunie na tah bota
 
-
         ################ VYMAZAT TENTO BLOK, SLUZI LEN NA OTESTOVANIE FUNGOVANIA HRY DVOCH BOTOV
         if allowedPlayerCardsToThrowAway:
             if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
                 thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
-                playerCards.remove(sameColorPlayerCardsToThrowAway[-1])    # odstranenie poslednej karty - tej, kt. mozem odhodit
+                playerCards.remove(
+                    sameColorPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
 
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
                 # if len(sameColorPlayerCardsToThrowAway) >= 2:           # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
@@ -120,7 +132,8 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
             # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
             elif len(sameColorPlayerCardsToThrowAway) < len(sameNumberPlayerCardsToThrowAway):
                 thrownAwayCards = sameNumberPlayerCardsToThrowAway[-1]
-                playerCards.remove(sameNumberPlayerCardsToThrowAway[-1])   # odstranenie poslednej karty - tej, kt. mozem odhodit
+                playerCards.remove(
+                    sameNumberPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
 
                 # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
                 # if len(sameNumberPlayerCardsToThrowAway) >= 2:          # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
@@ -168,7 +181,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
             if len(cards_in_stack) == 0:
                 cards_in_stack = shuffle_new_cards()
             cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
-            playerCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
+            playerCards.append(cardToRemoveFromStack)  # priradenie vybranej karty do kariet bota
             print(len(cards_in_stack))
             print(len(playerCards))
             # TODO pokial tato vybrana karta z balicku dovoluje botovi odhodit tuto novu kartu, urobi tak, inak sa tah presunie na tah hraca
@@ -182,8 +195,10 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         print('Player has won the game.')
         exit(0)
 
-def botMove(cards_in_stack, thrownAwayCards, botCards):
+
+def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
     if len(botCards) != 0:
+        skipCard = False
         allowedBotCardsToThrowAway = []  # karty, ktore moze bot odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -196,11 +211,20 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
         elif 'blue' in thrownAwayCards:
             colorOfThrownAwayCard = 'blue'
         else:
-            print('[color] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
+            print(
+                '[color] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             colorOfThrownAwayCard = 'wild card'
 
         # vyberie vsetky botove karty, ktore maju rovnaku farbu ako farba karty na hromadke
         sameColorBotCardsToThrowAway = [i for i in botCards if colorOfThrownAwayCard in i]
+
+        # zistujem, ci ma bot skipCard a ak ano, zistim si jej index vo farebnych kartach, ktore moze odhodit
+        indexOfSkipCard = -1
+        for item in sameColorBotCardsToThrowAway:
+            indexOfSkipCard += 1
+            if 'Skip' in item:
+                skipCard = True
+                break
 
         # zistenie cisla karty na odhadzovacej hromadke
         if 'Zero' in thrownAwayCards:
@@ -224,7 +248,8 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
         elif 'Nine' in thrownAwayCards:
             numberOfThrownAwayCard = 'Nine'
         else:
-            print('[number] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
+            print(
+                '[number] ThrownAwayCard is a wild card, code is not ready for this yet.')  # TODO implement wild cards, reverse cards, draw cards, skip cards
             numberOfThrownAwayCard = 'wild card'
 
         # vyberie vsetky hracove karty, ktore maju rovnake cislo ako cislo karty na hromadke
@@ -237,36 +262,46 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
         # bot zvoli kartu (pripadne viacero kariet), ktore zahrat moze a nasledne priradenie vybranej karty na vrch hromadky
         # pokial ma bot viac (prípadne rovnako) kariet s rovnakou farbou, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
         if allowedBotCardsToThrowAway:
-            if len(sameColorBotCardsToThrowAway) >= len(sameNumberBotCardsToThrowAway):
-                thrownAwayCards = sameColorBotCardsToThrowAway[-1]      # odstranenie poslednej karty - tej, kt. mozem odhodit
-                botCards.remove(sameColorBotCardsToThrowAway[-1])
+            if not skipCard:
+                if len(sameColorBotCardsToThrowAway) >= len(sameNumberBotCardsToThrowAway):
+                    thrownAwayCards = sameColorBotCardsToThrowAway[
+                        -1]  # odstranenie poslednej karty - tej, kt. mozem odhodit
+                    botCards.remove(sameColorBotCardsToThrowAway[-1])
 
-                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                # if len(sameColorBotCardsToThrowAway) >= 2:              # jedna varianta - pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                #     sameColorBotCardsToThrowAway.pop()
-                #     botCards.remove(sameColorBotCardsToThrowAway[-1])
+                    # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
+                    # if len(sameColorBotCardsToThrowAway) >= 2:              # jedna varianta - pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
+                    #     sameColorBotCardsToThrowAway.pop()
+                    #     botCards.remove(sameColorBotCardsToThrowAway[-1])
 
-                # for item in sameColorBotCardsToThrowAway: # druha varianta - odhodenie vsetkych kariet, ktore mozem
-                #     if item in botCards:
-                #         botCards.remove(item)
-            # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
-            elif len(sameColorBotCardsToThrowAway) < len(sameNumberBotCardsToThrowAway):
-                thrownAwayCards = sameNumberBotCardsToThrowAway[-1]     # odstranenie poslednej karty - tej, kt. mozem odhodit
-                botCards.remove(sameNumberBotCardsToThrowAway[-1])
+                    # for item in sameColorBotCardsToThrowAway: # druha varianta - odhodenie vsetkych kariet, ktore mozem
+                    #     if item in botCards:
+                    #         botCards.remove(item)
+                # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
+                elif len(sameColorBotCardsToThrowAway) < len(sameNumberBotCardsToThrowAway):
+                    thrownAwayCards = sameNumberBotCardsToThrowAway[
+                        -1]  # odstranenie poslednej karty - tej, kt. mozem odhodit
+                    botCards.remove(sameNumberBotCardsToThrowAway[-1])
 
-                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                # if len(sameNumberBotCardsToThrowAway) >= 2:             # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                #     sameNumberBotCardsToThrowAway.pop()
-                #     botCards.remove(sameNumberBotCardsToThrowAway[-1])
+                    # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
+                    # if len(sameNumberBotCardsToThrowAway) >= 2:             # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
+                    #     sameNumberBotCardsToThrowAway.pop()
+                    #     botCards.remove(sameNumberBotCardsToThrowAway[-1])
 
-                # for item in sameNumberBotCardsToThrowAway:
-                #     if item in botCards:
-                #         botCards.remove(item)
-            print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
-            print('botCards:', botCards)
-            if len(botCards) == 0:
-                print('Bot has won the game.')
-                exit(0)
+                    # for item in sameNumberBotCardsToThrowAway:
+                    #     if item in botCards:
+                    #         botCards.remove(item)
+                print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
+                print('botCards:', botCards)
+                if len(botCards) == 0:
+                    print('Bot has won the game.')
+                    exit(0)
+            # pokial ma skipCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
+            else:
+                thrownAwayCards = sameColorBotCardsToThrowAway[indexOfSkipCard]
+                print('indexOfSkipCard:', indexOfSkipCard)
+                botCards.remove(sameColorBotCardsToThrowAway[indexOfSkipCard])
+
+
         # Nutnost potiahnutia karty z balicku
         else:
             print('bot have to draw a card')
@@ -274,7 +309,7 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
             if len(cards_in_stack) == 0:
                 cards_in_stack = shuffle_new_cards()
             cardToRemoveFromStack = random.choice(cards_in_stack)  # random vyber karty z balicku
-            botCards.append(cardToRemoveFromStack)                 # priradenie vybranej karty do kariet bota
+            botCards.append(cardToRemoveFromStack)  # priradenie vybranej karty do kariet bota
             print(len(cards_in_stack))
             print(botCards)
             print(len(botCards))
@@ -282,34 +317,38 @@ def botMove(cards_in_stack, thrownAwayCards, botCards):
 
             cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
         print('-----')
-        return (cards_in_stack, thrownAwayCards, botCards)
+
+        return (cards_in_stack, thrownAwayCards, botCards, skipCard)
     else:
         print('Bot has won the game.')
         exit(0)
+
 
 # inicializacia a zamiesanie kariet
 def shuffle_new_cards():
     new_cards = ['redZero', 'redOne', 'redTwo', 'redThree', 'redFour', 'redFive', 'redSix', 'redSeven', 'redEight',
                  'redNine', 'second_redOne', 'second_redTwo', 'second_redThree', 'second_redFour', 'second_redFive',
-                 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine',
+                 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine', 'redSkipCard',
                  'yellowZero', 'yellowOne', 'yellowTwo', 'yellowThree', 'yellowFour', 'yellowFive', 'yellowSix',
                  'yellowSeven', 'yellowEight', 'yellowNine', 'second_yellowOne', 'second_yellowTwo',
                  'second_yellowThree', 'second_yellowFour', 'second_yellowFive', 'second_yellowSix',
-                 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine',
+                 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine', 'yellowSkipCard',
                  'greenZero', 'greenOne', 'greenTwo', 'greenThree', 'greenFour', 'greenFive', 'greenSix', 'greenSeven',
                  'greenEight', 'greenNine', 'second_greenOne', 'second_greenTwo', 'second_greenThree',
                  'second_greenFour', 'second_greenFive', 'second_greenSix', 'second_greenSeven', 'second_greenEight',
-                 'second_greenNine',
+                 'second_greenNine', 'greenSkipCard',
                  'blueZero', 'blueOne', 'blueTwo', 'blueThree', 'blueFour', 'blueFive', 'blueSix', 'blueSeven',
                  'blueEight', 'blueNine', 'second_blueOne', 'second_blueTwo', 'second_blueThree', 'second_blueFour',
-                 'second_blueFive', 'second_blueSix', 'second_blueSeven', 'second_blueEight', 'second_blueNine']
+                 'second_blueFive', 'second_blueSix', 'second_blueSeven', 'second_blueEight', 'second_blueNine',
+                 'blueSkipCard']
 
-                # TODO PODPOROVAT WILD CARDS
-                 #,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
-                 #'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card', redSkipCard,... ] A MNOHO DALSIIIIIIIIIIIIICH
+    # TODO PODPOROVAT WILD CARDS
+    # ,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
+    # 'second_wildDraw4Card', 'third_wildDraw4Card', 'fourth_wildDraw4Card', redSkipCard,... ] A MNOHO DALSIIIIIIIIIIIIICH
     # zamiesanie balicku kariet
     random.shuffle(new_cards)
     return new_cards
+
 
 # rozdanie 7 kariet hracovi a botovi, pripadne druhemu botovi a odstranenie kariet z balicku
 def deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards):
@@ -338,6 +377,7 @@ def deal_the_cards(numberOfPlayers, cards_in_stack, playerCards, botCards, secon
             print('second_botCards:', second_botCards)
             print('cards_in_stack:', len(cards_in_stack))
     return (numberOfPlayers, cards_in_stack, playerCards, botCards, second_botCards)
+
 
 # Zavolanie fce Main
 Main()
