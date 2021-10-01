@@ -34,18 +34,22 @@ def Main():
 
     # volanie funkcii na tah hraca a bota
     while (1):
-        cards_in_stack, thrownAwayCards, playerCards, botCards = playerMove(cards_in_stack, thrownAwayCards,
-                                                                            playerCards, botCards)
+        cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard = playerMove(cards_in_stack, thrownAwayCards,
+                                                                            playerCards, botCards, skipCard)
+        if skipCard:
+            cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard = playerMove(cards_in_stack, thrownAwayCards,
+                                                                                playerCards, botCards, skipCard)
         cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards, skipCard)
         if skipCard:
             cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards,
                                                                           skipCard)
 
 
-def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
+def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
     if len(playerCards) != 0:
+        skipCard = False
         allowedPlayerCardsToThrowAway = []  # karty, ktore moze hrac odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -65,6 +69,14 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
 
         # vyberie vsetky hracove karty, ktore maju rovnaku farbu ako farba karty na hromadke
         sameColorPlayerCardsToThrowAway = [i for i in playerCards if colorOfThrownAwayCard in i]
+
+        # zistujem, ci ma bot skipCard a ak ano, zistim si jej index vo farebnych kartach, ktore moze odhodit
+        indexOfSkipCard = -1
+        for item in sameColorPlayerCardsToThrowAway:
+            indexOfSkipCard += 1
+            if 'Skip' in item:
+                skipCard = True
+                break
 
         # zistenie cisla karty na odhadzovacej hromadke
         if 'Zero' in thrownAwayCards:
@@ -116,64 +128,55 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
 
         ################ VYMAZAT TENTO BLOK, SLUZI LEN NA OTESTOVANIE FUNGOVANIA HRY DVOCH BOTOV
         if allowedPlayerCardsToThrowAway:
-            if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
-                thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
-                playerCards.remove(
-                    sameColorPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
+            if not skipCard:
+                if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
+                    thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
+                    playerCards.remove(
+                        sameColorPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
 
-                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                # if len(sameColorPlayerCardsToThrowAway) >= 2:           # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                #     sameColorPlayerCardsToThrowAway.pop()
-                #     playerCards.remove(sameColorPlayerCardsToThrowAway[-1])
+                # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
+                elif len(sameColorPlayerCardsToThrowAway) < len(sameNumberPlayerCardsToThrowAway):
+                    thrownAwayCards = sameNumberPlayerCardsToThrowAway[-1]
+                    playerCards.remove(
+                        sameNumberPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
 
-                # for item in sameColorPlayerCardsToThrowAway:
-                #     if item in playerCards:
-                #         playerCards.remove(item)
-            # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
-            elif len(sameColorPlayerCardsToThrowAway) < len(sameNumberPlayerCardsToThrowAway):
-                thrownAwayCards = sameNumberPlayerCardsToThrowAway[-1]
-                playerCards.remove(
-                    sameNumberPlayerCardsToThrowAway[-1])  # odstranenie poslednej karty - tej, kt. mozem odhodit
+                print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
+                print('playerCards:', playerCards)
+                if len(playerCards) == 0:
+                    print('Player has won the game.')
+                    print(botCards)
+                    # zistenie hodnoty jednotlivych botovych kariet, kt. ma na ruke po hracovom vitazstve
+                    coinsToEarn = 0
+                    for item in botCards:
+                        if 'Zero' in item:
+                            coinsToEarn += 0
+                        elif 'One' in item:
+                            coinsToEarn += 1
+                        elif 'Two' in item:
+                            coinsToEarn += 2
+                        elif 'Three' in item:
+                            coinsToEarn += 3
+                        elif 'Four' in item:
+                            coinsToEarn += 4
+                        elif 'Five' in item:
+                            coinsToEarn += 5
+                        elif 'Six' in item:
+                            coinsToEarn += 6
+                        elif 'Seven' in item:
+                            coinsToEarn += 7
+                        elif 'Eight' in item:
+                            coinsToEarn += 8
+                        elif 'Nine' in item:
+                            coinsToEarn += 9
+                    ## return coinsToEarn  # vratim do FE informaciu o pocte hracovych zarobenych coinov z danej hry
+                    print('coinsToEarn:', coinsToEarn)
+                    exit(0)
+            # pokial ma skipCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
+            else:
+                thrownAwayCards = sameColorPlayerCardsToThrowAway[indexOfSkipCard]
+                print('indexOfSkipCard:', indexOfSkipCard)
+                playerCards.remove(sameColorPlayerCardsToThrowAway[indexOfSkipCard])
 
-                # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                # if len(sameNumberPlayerCardsToThrowAway) >= 2:          # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                #     sameNumberPlayerCardsToThrowAway.pop()
-                #     playerCards.remove(sameNumberPlayerCardsToThrowAway[-1])
-
-                # for item in sameNumberPlayerCardsToThrowAway:
-                #     if item in playerCards:
-                #         playerCards.remove(item)
-            print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
-            print('playerCards:', playerCards)
-            if len(playerCards) == 0:
-                print('Player has won the game.')
-                print(botCards)
-                # zistenie hodnoty jednotlivych botovych kariet, kt. ma na ruke po hracovom vitazstve
-                coinsToEarn = 0
-                for item in botCards:
-                    if 'Zero' in item:
-                        coinsToEarn += 0
-                    elif 'One' in item:
-                        coinsToEarn += 1
-                    elif 'Two' in item:
-                        coinsToEarn += 2
-                    elif 'Three' in item:
-                        coinsToEarn += 3
-                    elif 'Four' in item:
-                        coinsToEarn += 4
-                    elif 'Five' in item:
-                        coinsToEarn += 5
-                    elif 'Six' in item:
-                        coinsToEarn += 6
-                    elif 'Seven' in item:
-                        coinsToEarn += 7
-                    elif 'Eight' in item:
-                        coinsToEarn += 8
-                    elif 'Nine' in item:
-                        coinsToEarn += 9
-                ## return coinsToEarn  # vratim do FE informaciu o pocte hracovych zarobenych coinov z danej hry
-                print('coinsToEarn:', coinsToEarn)
-                exit(0)
         # Nutnost potiahnutia karty z balicku
         else:
             print('player have to draw a card')
@@ -190,7 +193,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards):
         print('-----')
         ################ AZ POTIALTO VYMAZAT BLOK KODU, KT. SLUZI NA OTESTOVANIE
 
-        return (cards_in_stack, thrownAwayCards, playerCards, botCards)
+        return (cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
     else:
         print('Player has won the game.')
         exit(0)
@@ -268,28 +271,12 @@ def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
                         -1]  # odstranenie poslednej karty - tej, kt. mozem odhodit
                     botCards.remove(sameColorBotCardsToThrowAway[-1])
 
-                    # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                    # if len(sameColorBotCardsToThrowAway) >= 2:              # jedna varianta - pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                    #     sameColorBotCardsToThrowAway.pop()
-                    #     botCards.remove(sameColorBotCardsToThrowAway[-1])
-
-                    # for item in sameColorBotCardsToThrowAway: # druha varianta - odhodenie vsetkych kariet, ktore mozem
-                    #     if item in botCards:
-                    #         botCards.remove(item)
                 # pokial ma bot viac kariet s rovnakym cislom, ako je na vrchu hromadky, tak na nu vylozi vsetky tieto karty
                 elif len(sameColorBotCardsToThrowAway) < len(sameNumberBotCardsToThrowAway):
                     thrownAwayCards = sameNumberBotCardsToThrowAway[
                         -1]  # odstranenie poslednej karty - tej, kt. mozem odhodit
                     botCards.remove(sameNumberBotCardsToThrowAway[-1])
 
-                    # odstranenie vsetkych vyhodenych kariet z kariet bota na odhadzovaniu hromadku
-                    # if len(sameNumberBotCardsToThrowAway) >= 2:             # pokial mozem kariet odhodit naraz viac, tak odhodim dve posledne z tych, kt. mozem odhodit
-                    #     sameNumberBotCardsToThrowAway.pop()
-                    #     botCards.remove(sameNumberBotCardsToThrowAway[-1])
-
-                    # for item in sameNumberBotCardsToThrowAway:
-                    #     if item in botCards:
-                    #         botCards.remove(item)
                 print('Vrchna karta na odhadzovacej hromadke:', thrownAwayCards)
                 print('botCards:', botCards)
                 if len(botCards) == 0:
