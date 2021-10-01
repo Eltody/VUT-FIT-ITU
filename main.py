@@ -6,6 +6,13 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 
 profileNames = []
+profiles = []
+highScores = []
+playedGames = []
+wins = []
+themes = []
+pictures = []
+coins = []
 lang = "slovakia"
 name = ""
 
@@ -24,22 +31,35 @@ class MainWindow(QMainWindow):
             open("savegame.ktg", "r")
         except IOError:
             createFile = open("savegame.ktg", "w")
-            createFile.write("~\n~\n~\n~\n~")
+            createFile.write("-\n-\n-\n-\n-")
             createFile.close()
 
         save = open("savegame.ktg", "r")
+
         while True:
             tmp = save.readline()
             if tmp == "":
                 break
-            elif "~" in tmp:
-                profileNames.append("~")
+            elif "-" in tmp:
+                profileNames.append("-")
+                profiles.append("~")
+                highScores.append(0)
+                playedGames.append(0)
+                wins.append(0)
+                themes.append("~")
+                pictures.append("~")
+                coins.append(100)
             else:
                 temp = tmp.split("+")
                 profileNames.append(temp[0])
+                profiles.append(temp[1])
+                highScores.append(temp[2])
+                playedGames.append(temp[3])
+                wins.append(temp[4])
+                themes.append(temp[5])
+                pictures.append(temp[6])
+                coins.append(temp[7])
         save.close()
-
-        print(profileNames)
 
         mainWindow = QMainWindow()
         mainWindow.setStyleSheet("border-image: url(./images/background.jpg); background-attachment: fixed")
@@ -103,16 +123,7 @@ class MainWindow(QMainWindow):
 
         background.setLayout(menu_layout)
 
-        if lang == "slovakia":
-            name = "%s" % (profile)
-        elif lang == "united-kingdom":
-            name = "%s" % (profile)
-        elif lang == "france":
-            name = "%s" % (profile)
-        elif lang == "germany":
-            name = "%s" % (profile)
-        else:
-            name = "%s" % (profile)
+        name = "%s" % (profile)
         title = QLabel(background)
         title.setText(name)
         title.setAlignment(Qt.AlignCenter)
@@ -450,9 +461,20 @@ class MainWindow(QMainWindow):
 
     def confirm(self):
         global profileNames
+        global profiles
+        global highScores
+        global playedGames
+        global wins
+        global themes
+        global pictures
+        global coins
 
         save = open("savegame.ktg", "w+")
-        save.write("%s+\n%s+\n%s+\n%s+\n%s+" % (profileNames[0], profileNames[1], profileNames[2], profileNames[3], profileNames[4]))
+        save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[0], profiles[0], highScores[0], playedGames[0], wins[0], themes[0], pictures[0], coins[0]))
+        save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[1], profiles[1], highScores[1], playedGames[1], wins[1], themes[1], pictures[1], coins[1]))
+        save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[2], profiles[2], highScores[2], playedGames[2], wins[2], themes[2], pictures[2], coins[2]))
+        save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[3], profiles[3], highScores[3], playedGames[3], wins[3], themes[3], pictures[3], coins[3]))
+        save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[4], profiles[4], highScores[4], playedGames[4], wins[4], themes[4], pictures[4], coins[4]))
         save.close()
 
         sys.exit(1)
@@ -461,7 +483,7 @@ class MainWindow(QMainWindow):
         global profileNames
 
         profile = self.sender().text()
-        profileNames[int(profile)] = "~"
+        profileNames[int(profile)] = "-"
 
         self.menu()
 
@@ -502,10 +524,11 @@ class MainWindow(QMainWindow):
         menu_layout.addWidget(title, 1, 3)
 
         profile1 = QPushButton(mainWindow)
-        if profileNames[0] != "~":
-            profile1.setText(profileNames[0])
-            profile1.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
-        else:
+        profile1.setStyleSheet("border-image: none")
+        profile1.setCursor(Qt.PointingHandCursor)
+        profile1.clicked.connect(self.new)
+        menu_layout.addWidget(profile1, 3, 3, alignment=Qt.AlignLeft)
+        if profileNames[0] == "-":
             if lang == "slovakia":
                 profile1.setText("Profil 1")
             elif lang == "united-kingdom":
@@ -517,12 +540,19 @@ class MainWindow(QMainWindow):
             else:
                 profile1.setText("Профиль 1")
             profile1.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile1.setStyleSheet("border-image: none")
-        profile1.setCursor(Qt.PointingHandCursor)
-        profile1.clicked.connect(self.new)
-        menu_layout.addWidget(profile1, 3, 3, alignment=Qt.AlignLeft)
+        else:
+            profile1.setText(profileNames[0])
+            profile1.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
 
-        if profileNames[0] != "~":
+            profile1score = QLabel(profile1)
+            profile1score.setText("Played: %s / %s\nHighScore: %s\nBalance: %s" % (wins[0], playedGames[0], highScores[0], coins[0]))
+            profile1score.setAlignment(Qt.AlignRight)
+            profile1score.setAttribute(Qt.WA_TransparentForMouseEvents)
+            profile1score.setContentsMargins(0, 9, 18, 0)
+            profile1score.setStyleSheet(".QLabel {color: black; font: 18px} QWidget {border-image: none}")
+            profile1score.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
+            menu_layout.addWidget(profile1score, 3, 3, alignment=Qt.AlignLeft)
+
             profile1delete = QPushButton(mainWindow)
             profile1delete.setText("0")
             profile1delete.setFont(invisible)
@@ -533,10 +563,11 @@ class MainWindow(QMainWindow):
             menu_layout.addWidget(profile1delete, 3, 3, alignment=Qt.AlignRight)
 
         profile2 = QPushButton(mainWindow)
-        if profileNames[1] != "~":
-            profile2.setText(profileNames[1])
-            profile2.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
-        else:
+        profile2.setStyleSheet("border-image: none")
+        profile2.setCursor(Qt.PointingHandCursor)
+        profile2.clicked.connect(self.new)
+        menu_layout.addWidget(profile2, 5, 3, alignment=Qt.AlignLeft)
+        if profileNames[1] == "-":
             if lang == "slovakia":
                 profile2.setText("Profil 2")
             elif lang == "united-kingdom":
@@ -548,12 +579,19 @@ class MainWindow(QMainWindow):
             else:
                 profile2.setText("Профиль 2")
             profile2.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile2.setStyleSheet("border-image: none")
-        profile2.setCursor(Qt.PointingHandCursor)
-        profile2.clicked.connect(self.new)
-        menu_layout.addWidget(profile2, 5, 3, alignment=Qt.AlignLeft)
+        else:
+            profile2.setText(profileNames[1])
+            profile2.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
 
-        if profileNames[1] != "~":
+            profile2score = QLabel(profile2)
+            profile2score.setText("Played: %s / %s\nHighScore: %s\nBalance: %s" % (wins[1], playedGames[1], highScores[1], coins[1]))
+            profile2score.setAlignment(Qt.AlignRight)
+            profile2score.setAttribute(Qt.WA_TransparentForMouseEvents)
+            profile2score.setContentsMargins(0, 9, 18, 0)
+            profile2score.setStyleSheet(".QLabel {color: black; font: 18px} QWidget {border-image: none}")
+            profile2score.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
+            menu_layout.addWidget(profile2score, 5, 3, alignment=Qt.AlignLeft)
+
             profile2delete = QPushButton(mainWindow)
             profile2delete.setText("1")
             profile2delete.setFont(invisible)
@@ -564,10 +602,11 @@ class MainWindow(QMainWindow):
             menu_layout.addWidget(profile2delete, 5, 3, alignment=Qt.AlignRight)
 
         profile3 = QPushButton(mainWindow)
-        if profileNames[2] != "~":
-            profile3.setText(profileNames[2])
-            profile3.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
-        else:
+        profile3.setStyleSheet("border-image: none")
+        profile3.setCursor(Qt.PointingHandCursor)
+        profile3.clicked.connect(self.new)
+        menu_layout.addWidget(profile3, 7, 3, alignment=Qt.AlignLeft)
+        if profileNames[2] == "-":
             if lang == "slovakia":
                 profile3.setText("Profil 3")
             elif lang == "united-kingdom":
@@ -579,12 +618,19 @@ class MainWindow(QMainWindow):
             else:
                 profile3.setText("Профиль 3")
             profile3.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile3.setStyleSheet("border-image: none")
-        profile3.setCursor(Qt.PointingHandCursor)
-        profile3.clicked.connect(self.new)
-        menu_layout.addWidget(profile3, 7, 3, alignment=Qt.AlignLeft)
+        else:
+            profile3.setText(profileNames[2])
+            profile3.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
 
-        if profileNames[2] != "~":
+            profile3score = QLabel(profile3)
+            profile3score.setText("Played: %s / %s\nHighScore: %s\nBalance: %s" % (wins[2], playedGames[2], highScores[2], coins[2]))
+            profile3score.setAlignment(Qt.AlignRight)
+            profile3score.setAttribute(Qt.WA_TransparentForMouseEvents)
+            profile3score.setContentsMargins(0, 9, 18, 0)
+            profile3score.setStyleSheet(".QLabel {color: black; font: 18px} QWidget {border-image: none}")
+            profile3score.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
+            menu_layout.addWidget(profile3score, 7, 3, alignment=Qt.AlignLeft)
+
             profile3delete = QPushButton(mainWindow)
             profile3delete.setText("2")
             profile3delete.setFont(invisible)
@@ -595,10 +641,11 @@ class MainWindow(QMainWindow):
             menu_layout.addWidget(profile3delete, 7, 3, alignment=Qt.AlignRight)
 
         profile4 = QPushButton(mainWindow)
-        if profileNames[3] != "~":
-            profile4.setText(profileNames[3])
-            profile4.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
-        else:
+        profile4.setStyleSheet("border-image: none")
+        profile4.setCursor(Qt.PointingHandCursor)
+        profile4.clicked.connect(self.new)
+        menu_layout.addWidget(profile4, 9, 3, alignment=Qt.AlignLeft)
+        if profileNames[3] == "-":
             if lang == "slovakia":
                 profile4.setText("Profil 4")
             elif lang == "united-kingdom":
@@ -610,12 +657,19 @@ class MainWindow(QMainWindow):
             else:
                 profile4.setText("Профиль 4")
             profile4.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile4.setStyleSheet("border-image: none")
-        profile4.setCursor(Qt.PointingHandCursor)
-        profile4.clicked.connect(self.new)
-        menu_layout.addWidget(profile4, 9, 3, alignment=Qt.AlignLeft)
+        else:
+            profile4.setText(profileNames[3])
+            profile4.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
 
-        if profileNames[3] != "~":
+            profile4score = QLabel(profile4)
+            profile4score.setText("Played: %s / %s\nHighScore: %s\nBalance: %s" % (wins[3], playedGames[3], highScores[3], coins[3]))
+            profile4score.setAlignment(Qt.AlignRight)
+            profile4score.setAttribute(Qt.WA_TransparentForMouseEvents)
+            profile4score.setContentsMargins(0, 9, 18, 0)
+            profile4score.setStyleSheet(".QLabel {color: black; font: 18px} QWidget {border-image: none}")
+            profile4score.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
+            menu_layout.addWidget(profile4score, 9, 3, alignment=Qt.AlignLeft)
+
             profile4delete = QPushButton(mainWindow)
             profile4delete.setText("3")
             profile4delete.setFont(invisible)
@@ -626,10 +680,11 @@ class MainWindow(QMainWindow):
             menu_layout.addWidget(profile4delete, 9, 3, alignment=Qt.AlignRight)
 
         profile5 = QPushButton(mainWindow)
-        if profileNames[4] != "~":
-            profile5.setText(profileNames[4])
-            profile5.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
-        else:
+        profile5.setStyleSheet("border-image: none")
+        profile5.setCursor(Qt.PointingHandCursor)
+        profile5.clicked.connect(self.new)
+        menu_layout.addWidget(profile5, 11, 3, alignment=Qt.AlignLeft)
+        if profileNames[4] == "-":
             if lang == "slovakia":
                 profile5.setText("Profil 5")
             elif lang == "united-kingdom":
@@ -641,12 +696,19 @@ class MainWindow(QMainWindow):
             else:
                 profile5.setText("Профиль 5")
             profile5.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile5.setStyleSheet("border-image: none")
-        profile5.setCursor(Qt.PointingHandCursor)
-        profile5.clicked.connect(self.new)
-        menu_layout.addWidget(profile5, 11, 3, alignment=Qt.AlignLeft)
+        else:
+            profile5.setText(profileNames[4])
+            profile5.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
 
-        if profileNames[4] != "~":
+            profile5score = QLabel(profile1)
+            profile5score.setText("Played: %s / %s\nHighScore: %s\nBalance: %s" % (wins[4], playedGames[4], highScores[4], coins[4]))
+            profile5score.setAlignment(Qt.AlignRight)
+            profile5score.setAttribute(Qt.WA_TransparentForMouseEvents)
+            profile5score.setContentsMargins(0, 9, 18, 0)
+            profile5score.setStyleSheet(".QLabel {color: black; font: 18px} QWidget {border-image: none}")
+            profile5score.setFixedSize(round(screen.width() // 3.6), screen.height() // 13)
+            menu_layout.addWidget(profile5score, 11, 3, alignment=Qt.AlignLeft)
+
             profile5delete = QPushButton(mainWindow)
             profile5delete.setText("4")
             profile5delete.setFont(invisible)
