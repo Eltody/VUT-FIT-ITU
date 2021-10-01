@@ -14,6 +14,7 @@ def Main():
     botCards = []
     second_botCards = []
     skipCard = False
+    reverseCard = False
     # Game mode: one player, one pc bot
     numberOfPlayers = 2  # TODO VYMAZAT, GAME MODE SI BUDE VOLIT SAM HRAC
     # Game mode: one player, two pc bots
@@ -34,22 +35,20 @@ def Main():
 
     # volanie funkcii na tah hraca a bota
     while (1):
-        cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard = playerMove(cards_in_stack, thrownAwayCards,
-                                                                            playerCards, botCards, skipCard)
-        if skipCard:
-            cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard = playerMove(cards_in_stack, thrownAwayCards,
-                                                                                playerCards, botCards, skipCard)
-        cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards, skipCard)
-        if skipCard:
-            cards_in_stack, thrownAwayCards, botCards, skipCard = botMove(cards_in_stack, thrownAwayCards, botCards,
-                                                                          skipCard)
+        cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard = playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard)
+        if skipCard or reverseCard:
+            cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard = playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard)
+        cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard = botMove(cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard)
+        if skipCard or reverseCard:
+            cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard = botMove(cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard)
 
 
-def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard):
+def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard):
     # na tahu je hrac, na odhadzovaciu hromadku moze odhodit len kartu z ruky, ktora ma rovnaku farbu alebo ciselnu hodnotu ako vrchna karta na odhadzovacej hromadke
     # TODO urobit to aj pre rovnaky symbol
     if len(playerCards) != 0:
         skipCard = False
+        reverseCard = False
         allowedPlayerCardsToThrowAway = []  # karty, ktore moze hrac odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -72,10 +71,15 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
 
         # zistujem, ci ma bot skipCard a ak ano, zistim si jej index vo farebnych kartach, ktore moze odhodit
         indexOfSkipCard = -1
+        indexOfReverseCard = -1
         for item in sameColorPlayerCardsToThrowAway:
             indexOfSkipCard += 1
+            indexOfReverseCard += 1
             if 'Skip' in item:
                 skipCard = True
+                break
+            if 'Reverse' in item:
+                reverseCard = True
                 break
 
         # zistenie cisla karty na odhadzovacej hromadke
@@ -128,7 +132,7 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
 
         ################ VYMAZAT TENTO BLOK, SLUZI LEN NA OTESTOVANIE FUNGOVANIA HRY DVOCH BOTOV
         if allowedPlayerCardsToThrowAway:
-            if not skipCard:
+            if skipCard != True and reverseCard != True:
                 if len(sameColorPlayerCardsToThrowAway) >= len(sameNumberPlayerCardsToThrowAway):
                     thrownAwayCards = sameColorPlayerCardsToThrowAway[-1]
                     playerCards.remove(
@@ -171,11 +175,17 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
                     ## return coinsToEarn  # vratim do FE informaciu o pocte hracovych zarobenych coinov z danej hry
                     print('coinsToEarn:', coinsToEarn)
                     exit(0)
-            # pokial ma skipCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
-            else:
-                thrownAwayCards = sameColorPlayerCardsToThrowAway[indexOfSkipCard]
-                print('indexOfSkipCard:', indexOfSkipCard)
-                playerCards.remove(sameColorPlayerCardsToThrowAway[indexOfSkipCard])
+            # pokial ma skipCard alebo reverseCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
+            elif skipCard == True or reverseCard == True:
+                if skipCard == True:
+                    thrownAwayCards = sameColorPlayerCardsToThrowAway[indexOfSkipCard]
+                    print('indexOfSkipCard:', indexOfSkipCard)
+                    playerCards.remove(sameColorPlayerCardsToThrowAway[indexOfSkipCard])
+                if reverseCard == True:
+                    thrownAwayCards = sameColorPlayerCardsToThrowAway[indexOfReverseCard]
+                    print('indexOfReverseCard:', indexOfReverseCard)
+                    playerCards.remove(sameColorPlayerCardsToThrowAway[indexOfReverseCard])
+
 
         # Nutnost potiahnutia karty z balicku
         else:
@@ -193,15 +203,16 @@ def playerMove(cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
         print('-----')
         ################ AZ POTIALTO VYMAZAT BLOK KODU, KT. SLUZI NA OTESTOVANIE
 
-        return (cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard)
+        return (cards_in_stack, thrownAwayCards, playerCards, botCards, skipCard, reverseCard)
     else:
         print('Player has won the game.')
         exit(0)
 
 
-def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
+def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard):
     if len(botCards) != 0:
         skipCard = False
+        reverseCard = False
         allowedBotCardsToThrowAway = []  # karty, ktore moze bot odhodit na odhadzovaciu hromadku
 
         # zistenie farby karty na odhadzovacej hromadke
@@ -223,10 +234,15 @@ def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
 
         # zistujem, ci ma bot skipCard a ak ano, zistim si jej index vo farebnych kartach, ktore moze odhodit
         indexOfSkipCard = -1
+        indexOfReverseCard = -1
         for item in sameColorBotCardsToThrowAway:
             indexOfSkipCard += 1
+            indexOfReverseCard += 1
             if 'Skip' in item:
                 skipCard = True
+                break
+            if 'Reverse' in item:
+                reverseCard = True
                 break
 
         # zistenie cisla karty na odhadzovacej hromadke
@@ -282,12 +298,16 @@ def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
                 if len(botCards) == 0:
                     print('Bot has won the game.')
                     exit(0)
-            # pokial ma skipCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
-            else:
-                thrownAwayCards = sameColorBotCardsToThrowAway[indexOfSkipCard]
-                print('indexOfSkipCard:', indexOfSkipCard)
-                botCards.remove(sameColorBotCardsToThrowAway[indexOfSkipCard])
-
+            # pokial ma skipCard alebo reverseCard, pouzije ju a odstrani sa mu z ruk a pokracuje hned dalsim tahom
+            elif skipCard == True or reverseCard == True:
+                if skipCard == True:
+                    thrownAwayCards = sameColorBotCardsToThrowAway[indexOfSkipCard]
+                    print('indexOfSkipCard:', indexOfSkipCard)
+                    botCards.remove(sameColorBotCardsToThrowAway[indexOfSkipCard])
+                if reverseCard == True:
+                    thrownAwayCards = sameColorBotCardsToThrowAway[indexOfReverseCard]
+                    print('indexOfReverseCard:', indexOfReverseCard)
+                    botCards.remove(sameColorBotCardsToThrowAway[indexOfReverseCard])
 
         # Nutnost potiahnutia karty z balicku
         else:
@@ -305,7 +325,7 @@ def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
             cards_in_stack.remove(cardToRemoveFromStack)  # odstranenie vybranej karty z balicku
         print('-----')
 
-        return (cards_in_stack, thrownAwayCards, botCards, skipCard)
+        return (cards_in_stack, thrownAwayCards, botCards, skipCard, reverseCard)
     else:
         print('Bot has won the game.')
         exit(0)
@@ -315,19 +335,19 @@ def botMove(cards_in_stack, thrownAwayCards, botCards, skipCard):
 def shuffle_new_cards():
     new_cards = ['redZero', 'redOne', 'redTwo', 'redThree', 'redFour', 'redFive', 'redSix', 'redSeven', 'redEight',
                  'redNine', 'second_redOne', 'second_redTwo', 'second_redThree', 'second_redFour', 'second_redFive',
-                 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine', 'redSkipCard',
+                 'second_redSix', 'second_redSeven', 'second_redEight', 'second_redNine', 'redSkipCard', 'second_redSkipCard', 'redReverseCard', 'second_redReverseCard',
                  'yellowZero', 'yellowOne', 'yellowTwo', 'yellowThree', 'yellowFour', 'yellowFive', 'yellowSix',
                  'yellowSeven', 'yellowEight', 'yellowNine', 'second_yellowOne', 'second_yellowTwo',
                  'second_yellowThree', 'second_yellowFour', 'second_yellowFive', 'second_yellowSix',
-                 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine', 'yellowSkipCard',
+                 'second_yellowSeven', 'second_yellowEight', 'second_yellowNine', 'yellowSkipCard', 'second_yellowSkipCard', 'yellowReverseCard', 'second_yellowReverseCard',
                  'greenZero', 'greenOne', 'greenTwo', 'greenThree', 'greenFour', 'greenFive', 'greenSix', 'greenSeven',
                  'greenEight', 'greenNine', 'second_greenOne', 'second_greenTwo', 'second_greenThree',
                  'second_greenFour', 'second_greenFive', 'second_greenSix', 'second_greenSeven', 'second_greenEight',
-                 'second_greenNine', 'greenSkipCard',
+                 'second_greenNine', 'greenSkipCard', 'second_greenSkipCard', 'greenReverseCard', 'second_greenReverseCard',
                  'blueZero', 'blueOne', 'blueTwo', 'blueThree', 'blueFour', 'blueFive', 'blueSix', 'blueSeven',
                  'blueEight', 'blueNine', 'second_blueOne', 'second_blueTwo', 'second_blueThree', 'second_blueFour',
                  'second_blueFive', 'second_blueSix', 'second_blueSeven', 'second_blueEight', 'second_blueNine',
-                 'blueSkipCard']
+                 'blueSkipCard', 'second_blueSkipCard', 'blueReverseCard', 'second_blueReverseCard']
 
     # TODO PODPOROVAT WILD CARDS
     # ,'wildCard', 'second_wildCard', 'third_wildCard', 'fourth_wildCard', 'wildDraw4Card',
