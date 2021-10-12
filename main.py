@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QLabel, QPushButton, QGridLayout, QSizePolicy, QMainWindow, QMenuBar, \
+from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout, QMainWindow, QMenuBar, \
     QSpinBox, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QHeaderView, QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
@@ -30,15 +30,17 @@ class MainWindow(QMainWindow):
             open("savegame.ktg", "r")
         except IOError:
             createFile = open("savegame.ktg", "w")
-            createFile.write("-\n-\n-\n-\n-")
+            createFile.write("slovakia\n-\n-\n-\n-\n-")
             createFile.close()
 
         save = open("savegame.ktg", "r")
 
         while True:
-            tmp = save.readline()
+            tmp = save.readline().rstrip('\n')
             if tmp == "":
                 break
+            elif tmp == "slovakia" or tmp == "united-kingdom" or tmp == "france" or tmp == "germany" or tmp == "russia":
+                lang = tmp
             elif "-" in tmp:
                 profileNames.append("-")
                 profiles.append("~")
@@ -72,6 +74,266 @@ class MainWindow(QMainWindow):
 
         self.menu()
         sys.exit(app.exec_())
+
+    def game(self):
+        global mainWindow
+        global background
+        global screen
+        global profile
+        global inputLine
+        global profileNames
+        global languageButton
+        global lang
+
+        background = QWidget(mainWindow)
+        background.setFixedSize(screen.width(), screen.height())
+        background.setStyleSheet(".QWidget{border-image: url(./images/gameBackground.jpg)}")
+
+        game_layout = QGridLayout(background)
+
+        game_layout.setRowStretch(0, 45)
+        game_layout.setRowStretch(1, 189)
+        game_layout.setRowStretch(2, 18)
+        game_layout.setRowStretch(3, 31)
+        game_layout.setRowStretch(4, 78)
+        game_layout.setRowStretch(5, 330)
+        game_layout.setRowStretch(6, 92)
+        game_layout.setRowStretch(7, 224)
+        game_layout.setRowStretch(8, 71)
+
+        background.setLayout(game_layout)
+
+## TOP PART
+        topPart = QWidget(background)
+        topPart.setStyleSheet(".QWidget {border-image: none}")
+        game_layout.addWidget(topPart, 1, 0)
+        topLayout = QGridLayout(topPart)
+        topLayout.setContentsMargins(0, 0, 0, 0)
+
+        topLayout.setColumnStretch(0, 62)
+        topLayout.setColumnStretch(1, 119)
+        topLayout.setColumnStretch(2, 487)
+        topLayout.setColumnStretch(3, 115)
+        topLayout.setColumnStretch(4, 24)
+        topLayout.setColumnStretch(5, 330)
+        topLayout.setColumnStretch(6, 24)
+        topLayout.setColumnStretch(7, 138)
+        topLayout.setColumnStretch(8, 439)
+        topLayout.setColumnStretch(9, 119)
+        topLayout.setColumnStretch(10, 62)
+
+        time = QLabel(topPart)
+        time.setText("Time")
+        time.setAlignment(Qt.AlignTop)
+        time.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
+        topLayout.addWidget(time, 0, 1)
+
+    ##BOT 1 NAME
+        bot1 = QWidget(topPart)
+        bot1.setStyleSheet(".QWidget {border-image: none}")
+        topLayout.addWidget(bot1, 0, 3)
+        bot1NameLayout = QGridLayout(bot1)
+        bot1NameLayout.setContentsMargins(0, 10, 0, 0)
+
+        bot1Image = QWidget(topPart)
+        bot1Image.setStyleSheet("border-image: url(./images/profile.jpg)")
+        bot1Image.setFixedSize(115, 115)
+        bot1NameLayout.addWidget(bot1Image, 1, 0)
+
+        bot1Name = QLabel(topPart)
+        bot1Name.setText("Name")
+        bot1Name.setAlignment(Qt.AlignCenter)
+        bot1Name.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
+        bot1NameLayout.addWidget(bot1Name, 2, 0)
+    ##
+
+    ##BOT 1 CARDS
+        bot1Cards = QWidget(topPart)
+        bot1Cards.setStyleSheet(".QWidget {border-image: none}")
+        topLayout.addWidget(bot1Cards, 0, 5)
+        bot1Layout = QGridLayout(bot1Cards)
+        bot1Layout.setContentsMargins(0, 0, 0, 0)
+
+        bot1Layout.setRowStretch(0, 130)
+
+        bot1Card1 = QWidget(topPart)
+        bot1Card1.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        bot1Layout.addWidget(bot1Card1, 0, 0)
+        bot1Card2 = QWidget(topPart)
+        bot1Card2.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        bot1Layout.addWidget(bot1Card2, 0, 1)
+        bot1Card3 = QWidget(topPart)
+        bot1Card3.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        bot1Layout.addWidget(bot1Card3, 0, 2)
+        bot1Card4 = QWidget(topPart)
+        bot1Card4.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        bot1Layout.addWidget(bot1Card4, 0, 3)
+        bot1Card5 = QWidget(topPart)
+        bot1Card5.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        bot1Layout.addWidget(bot1Card5, 0, 4)
+    ##
+
+        bot1More = QLabel(topPart)
+        bot1More.setText("+X")
+        bot1More.setAlignment(Qt.AlignCenter)
+        bot1More.setStyleSheet(".QLabel {color: black; font: bold 32px} QWidget {border-image: none}")
+        topLayout.addWidget(bot1More, 0, 7)
+
+        buttonFont = QFont("Arial", 12)
+        buttonFont.setItalic(True)
+
+        menuButton = QPushButton(topPart)
+        if lang == "slovakia":
+            menuButton.setText("Hlavné menu")
+        elif lang == "united-kingdom":
+            menuButton.setText("Main menu")
+        elif lang == "france":
+            menuButton.setText("Menu principal")
+        elif lang == "germany":
+            menuButton.setText("Hauptmenü")
+        else:
+            menuButton.setText("Главное меню")
+        menuButton.setStyleSheet("border-image: none;" "border: 1px dashed black;" "border-radius: 15%;" "background-color: qlineargradient( x1:1 y1:1, x2:0 y2:0, stop:0 white, stop:1 gray);")
+        menuButton.setFont(buttonFont)
+        menuButton.setCursor(Qt.PointingHandCursor)
+        topLayout.addWidget(menuButton, 0, 9, alignment=Qt.AlignTop)
+        menuButton.clicked.connect(self.menu)
+
+## MIDDLE TOP PART
+        middleTopPart = QWidget(background)
+        middleTopPart.setStyleSheet(".QWidget {border-image: none}")
+        game_layout.addWidget(middleTopPart, 3, 0)
+        middleTopLayout = QGridLayout(middleTopPart)
+
+        middleTopLayout.setColumnStretch(0, 193)
+        middleTopLayout.setColumnStretch(1, 138)
+        middleTopLayout.setColumnStretch(2, 1259)
+        middleTopLayout.setColumnStretch(3, 138)
+        middleTopLayout.setColumnStretch(4, 193)
+
+        bot2More = QLabel(topPart)
+        bot2More.setText("+X")
+        bot2More.setAlignment(Qt.AlignCenter)
+        bot2More.setStyleSheet(".QLabel {color: black; font: bold 32px} QWidget {border-image: none}")
+        middleTopLayout.addWidget(bot2More, 0, 1)
+
+        bot3More = QLabel(topPart)
+        bot3More.setText("+X")
+        bot3More.setAlignment(Qt.AlignCenter)
+        bot3More.setStyleSheet(".QLabel {color: black; font: bold 32px} QWidget {border-image: none}")
+        middleTopLayout.addWidget(bot3More, 0, 3)
+##
+
+## MIDDLE PART
+        middlePart = QWidget(background)
+        middlePart.setStyleSheet(".QWidget {border-image: none}")
+        game_layout.addWidget(middlePart, 5, 0)
+        middleLayout = QGridLayout(middlePart)
+
+        ##BOT 2 NAME
+        bot2 = QWidget(topPart)
+        bot2.setStyleSheet(".QWidget {border-image: none}")
+        middleLayout.addWidget(bot2, 0, 0)
+        bot2NameLayout = QGridLayout(bot2)
+        bot2NameLayout.setContentsMargins(32, 10, 32, 0)
+
+        bot2Image = QWidget(topPart)
+        bot2Image.setStyleSheet("border-image: url(./images/profile.jpg)")
+        bot2Image.setFixedSize(115, 115)
+        bot2NameLayout.addWidget(bot2Image, 1, 0)
+
+        bot2Name = QLabel(topPart)
+        bot2Name.setText("Name")
+        bot2Name.setAlignment(Qt.AlignCenter)
+        bot2Name.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
+        bot2NameLayout.addWidget(bot2Name, 2, 0)
+        ##
+
+        ##BOT 3 NAME
+        bot3 = QWidget(topPart)
+        bot3.setStyleSheet(".QWidget {border-image: none}")
+        middleLayout.addWidget(bot3, 0, 7)
+        bot3NameLayout = QGridLayout(bot3)
+        bot3NameLayout.setContentsMargins(32, 10, 32, 0)
+
+        bot3Image = QWidget(topPart)
+        bot3Image.setStyleSheet("border-image: url(./images/profile.jpg)")
+        bot3Image.setFixedSize(115, 115)
+        bot3NameLayout.addWidget(bot3Image, 1, 0)
+
+        bot3Name = QLabel(topPart)
+        bot3Name.setText("Name")
+        bot3Name.setAlignment(Qt.AlignCenter)
+        bot3Name.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
+        bot3NameLayout.addWidget(bot3Name, 2, 0)
+        ##
+##
+
+## BOTTOM PART
+        bottomPart = QWidget(background)
+        bottomPart.setStyleSheet(".QWidget {border-image: none}")
+        game_layout.addWidget(bottomPart, 7, 0)
+        bottomLayout = QGridLayout(bottomPart)
+
+        ##PLAYER NAME
+        player = QWidget(topPart)
+        player.setStyleSheet(".QWidget {border-image: none}")
+        bottomLayout.addWidget(player, 0, 0)
+        playerNameLayout = QGridLayout(player)
+        playerNameLayout.setContentsMargins(62, 10, 62, 0)
+
+        playerImage = QWidget(topPart)
+        playerImage.setStyleSheet("border-image: url(./images/panda.png)")
+        playerImage.setFixedSize(115, 115)
+        playerNameLayout.addWidget(playerImage, 1, 0)
+
+        playerName = QLabel(topPart)
+        playerName.setText("Name")
+        playerName.setAlignment(Qt.AlignCenter)
+        playerName.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
+        playerNameLayout.addWidget(playerName, 2, 0)
+        ##
+
+        ##PLAYER CARDS
+        playerCards = QWidget(bottomPart)
+        playerCards.setStyleSheet(".QWidget {border-image: none}")
+        bottomLayout.addWidget(playerCards, 0, 1)
+        playerLayout = QGridLayout(playerCards)
+        playerLayout.setContentsMargins(0, 0, 0, 0)
+
+        playerLayout.setRowStretch(0, 1401)
+
+        bot1Card1 = QWidget(topPart)
+        bot1Card1.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerLayout.addWidget(bot1Card1, 0, 0)
+        bot1Card2 = QWidget(topPart)
+        bot1Card2.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerLayout.addWidget(bot1Card2, 0, 1)
+        bot1Card3 = QWidget(topPart)
+        bot1Card3.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerLayout.addWidget(bot1Card3, 0, 2)
+        bot1Card4 = QWidget(topPart)
+        bot1Card4.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerLayout.addWidget(bot1Card4, 0, 3)
+        bot1Card5 = QWidget(topPart)
+        bot1Card5.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerLayout.addWidget(bot1Card5, 0, 4)
+        ##
+
+        kotahiFont = QFont("Arial", 24)
+
+        kotahiButton = QPushButton(topPart)
+        kotahiButton.setText("KOTAHI")
+        kotahiButton.setFixedSize(168, 168)
+        kotahiButton.setStyleSheet("border-image: none;" "border: 2px black;" "border-radius: 100%;" "background-color: rgba(255, 0, 0, 65);")
+        kotahiButton.setFont(kotahiFont)
+        kotahiButton.setCursor(Qt.PointingHandCursor)
+        bottomLayout.addWidget(kotahiButton, 0, 2, alignment=Qt.AlignCenter)
+        kotahiButton.clicked.connect(self.menu)
+##
+
+        mainWindow.setCentralWidget(background)
+        mainWindow.update()
 
     def gameConfig(self):
         global mainWindow
@@ -164,22 +426,22 @@ class MainWindow(QMainWindow):
         profile2.clicked.connect(self.new)
         menu_layout.addWidget(profile2, 5, 3)
 
-        profile3 = QPushButton(mainWindow)
+        startGame = QPushButton(mainWindow)
         if lang == "slovakia":
-            profile3.setText("Výber obrázku profilu")
+            startGame.setText("Začať hru")
         elif lang == "united-kingdom":
-            profile3.setText("Create new profile")
+            startGame.setText("Start game")
         elif lang == "france":
-            profile3.setText("Créer un nouveau profil")
+            startGame.setText("Démarrer jeu")
         elif lang == "germany":
-            profile3.setText("Neues profil erstellen")
+            startGame.setText("Spiel starten")
         else:
-            profile3.setText("Создать новый профиль")
-        profile3.setStyleSheet("border-image: none")
-        profile3.setCursor(Qt.PointingHandCursor)
-        profile3.setFixedSize(screen.width() // 3, screen.height() // 13)
-        profile3.clicked.connect(self.new)
-        menu_layout.addWidget(profile3, 7, 3)
+            startGame.setText("Начать игру")
+        startGame.setStyleSheet("border-image: none")
+        startGame.setCursor(Qt.PointingHandCursor)
+        startGame.setFixedSize(screen.width() // 3, screen.height() // 13)
+        startGame.clicked.connect(self.game)
+        menu_layout.addWidget(startGame, 7, 3)
 
         shopButton = QPushButton(mainWindow)
         if lang == "slovakia":
@@ -465,6 +727,7 @@ class MainWindow(QMainWindow):
         mainWindow.update()
 
     def confirm(self):
+        global lang
         global profileNames
         global profiles
         global highScores
@@ -475,6 +738,7 @@ class MainWindow(QMainWindow):
         global coins
 
         save = open("savegame.ktg", "w+")
+        save.write("%s\n" % lang)
         save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[0], profiles[0], highScores[0], playedGames[0], wins[0], themes[0], pictures[0], coins[0]))
         save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[1], profiles[1], highScores[1], playedGames[1], wins[1], themes[1], pictures[1], coins[1]))
         save.write("%s+%s+%d+%d+%d+%s+%s+%d+\n" % (profileNames[2], profiles[2], highScores[2], playedGames[2], wins[2], themes[2], pictures[2], coins[2]))
