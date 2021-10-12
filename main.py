@@ -71,8 +71,8 @@ class MainWindow(QMainWindow):
         mainWindow.setWindowTitle('Kotahi')
         mainWindow.setWindowIcon(QIcon('./images/icon.png'))
         mainWindow.showFullScreen()
-
-        self.menu()
+#################self.menu()
+        self.game()
         sys.exit(app.exec_())
 
     def game(self):
@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
 
         game_layout = QGridLayout(background)
 
-        game_layout.setRowStretch(0, 45)
+        game_layout.setRowStretch(0, 47)
         game_layout.setRowStretch(1, 189)
         game_layout.setRowStretch(2, 18)
         game_layout.setRowStretch(3, 31)
@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         game_layout.setRowStretch(5, 330)
         game_layout.setRowStretch(6, 92)
         game_layout.setRowStretch(7, 224)
-        game_layout.setRowStretch(8, 71)
+        game_layout.setRowStretch(8, 69)
 
         background.setLayout(game_layout)
 
@@ -274,6 +274,9 @@ class MainWindow(QMainWindow):
         bottomPart.setStyleSheet(".QWidget {border-image: none}")
         game_layout.addWidget(bottomPart, 7, 0)
         bottomLayout = QGridLayout(bottomPart)
+        bottomLayout.setContentsMargins(0, 0, 47, 0)
+        bottomLayout.setColumnStretch(1, 1402)
+        bottomLayout.setColumnStretch(2, 47)
 
         ##PLAYER NAME
         player = QWidget(topPart)
@@ -284,11 +287,11 @@ class MainWindow(QMainWindow):
 
         playerImage = QWidget(topPart)
         playerImage.setStyleSheet("border-image: url(./images/panda.png)")
-        playerImage.setFixedSize(115, 115)
+        playerImage.setFixedSize(133, 133)
         playerNameLayout.addWidget(playerImage, 1, 0)
 
         playerName = QLabel(topPart)
-        playerName.setText("Name")
+        playerName.setText("Diduška")
         playerName.setAlignment(Qt.AlignCenter)
         playerName.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
         playerNameLayout.addWidget(playerName, 2, 0)
@@ -301,35 +304,49 @@ class MainWindow(QMainWindow):
         playerLayout = QGridLayout(playerCards)
         playerLayout.setContentsMargins(0, 0, 0, 0)
 
-        playerLayout.setRowStretch(0, 1401)
-
-        bot1Card1 = QWidget(topPart)
-        bot1Card1.setStyleSheet("border-image: url(./images/cardBackV.png)")
-        playerLayout.addWidget(bot1Card1, 0, 0)
-        bot1Card2 = QWidget(topPart)
-        bot1Card2.setStyleSheet("border-image: url(./images/cardBackV.png)")
-        playerLayout.addWidget(bot1Card2, 0, 1)
-        bot1Card3 = QWidget(topPart)
-        bot1Card3.setStyleSheet("border-image: url(./images/cardBackV.png)")
-        playerLayout.addWidget(bot1Card3, 0, 2)
-        bot1Card4 = QWidget(topPart)
-        bot1Card4.setStyleSheet("border-image: url(./images/cardBackV.png)")
-        playerLayout.addWidget(bot1Card4, 0, 3)
-        bot1Card5 = QWidget(topPart)
-        bot1Card5.setStyleSheet("border-image: url(./images/cardBackV.png)")
-        playerLayout.addWidget(bot1Card5, 0, 4)
+        playerCard1 = QPushButton(bottomPart)
+        playerCard1.setFixedSize(155, 225)
+        playerCard1.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerCard1.setCursor(Qt.PointingHandCursor)
+        playerLayout.addWidget(playerCard1, 0, 0)
+        playerCard2 = QPushButton(bottomPart)
+        playerCard2.setFixedSize(155, 225)
+        playerCard2.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerCard2.setCursor(Qt.PointingHandCursor)
+        playerLayout.addWidget(playerCard2, 0, 1)
+        playerCard3 = QPushButton(bottomPart)
+        playerCard3.setFixedSize(155, 225)
+        playerCard3.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerCard3.setCursor(Qt.PointingHandCursor)
+        playerLayout.addWidget(playerCard3, 0, 2)
+        playerCard4 = QPushButton(bottomPart)
+        playerCard4.setFixedSize(155, 225)
+        playerCard4.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerCard4.setCursor(Qt.PointingHandCursor)
+        playerLayout.addWidget(playerCard4, 0, 3)
+        playerCard5 = QPushButton(bottomPart)
+        playerCard5.setFixedSize(155, 225)
+        playerCard5.setStyleSheet("border-image: url(./images/cardBackV.png)")
+        playerCard5.setCursor(Qt.PointingHandCursor)
+        playerLayout.addWidget(playerCard5, 0, 4)
         ##
 
         kotahiFont = QFont("Arial", 24)
 
         kotahiButton = QPushButton(topPart)
-        kotahiButton.setText("KOTAHI")
         kotahiButton.setFixedSize(168, 168)
-        kotahiButton.setStyleSheet("border-image: none;" "border: 2px black;" "border-radius: 100%;" "background-color: rgba(255, 0, 0, 65);")
-        kotahiButton.setFont(kotahiFont)
+        kotahiButton.setStyleSheet("QWidget {border-image: none;" "border: 5px solid black;" "border-radius: 80%;" "background-color: rgba(255, 0, 0, 65)}")
         kotahiButton.setCursor(Qt.PointingHandCursor)
-        bottomLayout.addWidget(kotahiButton, 0, 2, alignment=Qt.AlignCenter)
+        bottomLayout.addWidget(kotahiButton, 0, 3, alignment=Qt.AlignCenter)
         kotahiButton.clicked.connect(self.menu)
+
+        kotahiText = QLabel(kotahiButton)
+        kotahiText.setText("KOTAHI")
+        kotahiText.setAlignment(Qt.AlignCenter)
+        kotahiText.setAttribute(Qt.WA_TransparentForMouseEvents)
+        kotahiText.setStyleSheet(".QLabel {color: white; font: 32px} QWidget {border-image: none}")
+        kotahiText.setFixedSize(168, 168)
+        bottomLayout.addWidget(kotahiText, 0, 3, alignment=Qt.AlignCenter)
 ##
 
         mainWindow.setCentralWidget(background)
