@@ -364,12 +364,12 @@ class MainWindow(QMainWindow):
         playerNameLayout.setContentsMargins(62, 10, 62, 0)
 
         playerImage = QWidget(topPart)
-        playerImage.setStyleSheet("border-image: url(./images/panda.png)")
+        playerImage.setStyleSheet("border-image: url(./images/profile.png)")
         playerImage.setFixedSize(133, 133)
         playerNameLayout.addWidget(playerImage, 1, 0)
 
         playerName = QLabel(topPart)
-        playerName.setText("Diduška")
+        playerName.setText("Name")
         playerName.setAlignment(Qt.AlignCenter)
         playerName.setStyleSheet(".QLabel {color: white; font: bold 32px} QWidget {border-image: none}")
         playerNameLayout.addWidget(playerName, 2, 0)
